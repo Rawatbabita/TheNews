@@ -2,7 +2,7 @@
 //  NewsViewController.swift
 //  TheNews
 //
-//  Created by Prabhjot on 11/27/23.
+//  Created by Babita Rawat on 2023-11-29.
 //
 
 import UIKit
