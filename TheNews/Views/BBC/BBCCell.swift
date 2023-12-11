@@ -1,29 +1,28 @@
+//
+//  Created by Babita Rawat on 12/08/23.
+//
+
 import UIKit
 
 class BBCCell: NewsCell {
 
     static let identifier: String = "BBCCell"
 
-    private static let imageWidth: CGFloat = 125
-    private static let imageHeight: CGFloat = 75
-    private static let inset: CGFloat = 10
+    private static let imageWidth: CGFloat = 140
+    private static let imageHeight: CGFloat = 85
 
     private var main = UIView()
     private var badge = UILabel()
 
-    override func configure() {
-        super.configure()
+    override func config() {
+        super.config()
 
         title.numberOfLines = 3
-        title.font = .systemFont(ofSize: 15)
+        title.font = .boldSystemFont(ofSize: 15)
 
-        articleImageView.backgroundColor = .secondarySystemBackground
-        articleImageView.contentMode = .scaleAspectFill
-        articleImageView.clipsToBounds = true
-
-        badge.backgroundColor = .red
+        badge.backgroundColor = .systemGray
         badge.textColor = .white
-        badge.font = UIFont.systemFont(ofSize: 12)
+        badge.font = .boldSystemFont(ofSize: 14)
         badge.textAlignment = .center
 
         ago.textColor = .secondaryLabel
@@ -32,7 +31,7 @@ class BBCCell: NewsCell {
         main = UIView()
         contentView.addSubviewForAutoLayout(main)
 
-        let inset: CGFloat = BBCCell.inset
+        let inset: CGFloat = 10
         NSLayoutConstraint.activate([
             main.topAnchor.constraint(equalTo: contentView.topAnchor, constant: inset),
             main.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -inset),
@@ -50,12 +49,13 @@ class BBCCell: NewsCell {
             articleImageView.heightAnchor.constraint(equalToConstant: BBCCell.imageHeight),
             articleImageView.widthAnchor.constraint(equalToConstant: BBCCell.imageWidth),
 
-            title.topAnchor.constraint(equalTo: main.topAnchor, constant: inset),
+            title.topAnchor.constraint(equalTo: articleImageView.topAnchor, constant: 3),
             title.leadingAnchor.constraint(equalTo: articleImageView.trailingAnchor, constant: inset),
             main.trailingAnchor.constraint(equalTo: title.trailingAnchor),
 
-            ago.topAnchor.constraint(equalTo: title.bottomAnchor, constant: inset),
             ago.leadingAnchor.constraint(equalTo: articleImageView.trailingAnchor, constant: inset),
+            main.trailingAnchor.constraint(equalTo: ago.trailingAnchor),
+            articleImageView.bottomAnchor.constraint(equalTo: ago.bottomAnchor, constant: 3),
 
             main.bottomAnchor.constraint(equalTo: ago.bottomAnchor, constant: inset)
         ])
@@ -69,16 +69,28 @@ class BBCCell: NewsCell {
         ])
     }
 
-    func load(article: Article, downloader: ImageDownloader) {
+    func load(article: Article,
+              row: Int,
+              downloader: ImageDownloader = ImageDownloader.shared) {
         title.text = article.titleDisplay
-        ago.text = article.ago
+        ago.text = article.agoSource
 
         let size = CGSize(width: BBCCell.imageWidth, height: BBCCell.imageHeight)
-        load(urlString: article.image, downloader: downloader, size: size)
+        load(urlString: article.urlToImage, downloader: downloader, size: size)
+
+        badge.text = String(row + 1)
     }
 
-    func loadBadge(number: Int) {
-        badge.text = String(number + 1)
+}
+
+private extension Article {
+
+    var agoSource: String {
+        var bottom = ago ?? ""
+        if let source = source?.name {
+            bottom += " | " + source
+        }
+        return bottom
     }
 
 }
